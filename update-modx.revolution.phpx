@@ -1,0 +1,64 @@
+<?php
+// Skript zum Backup und anschließendem Update von MODX Revolution
+// www.jens-wittmann.de
+// Inspiration: http://de.modx.com/blog/2014/03/modx-revolution-updates-vereinfachen
+
+session_start();
+//unset($_SESSION['update']); // Für Testzwecke
+
+if (!isset($_SESSION['update'])) { // Backup durchführen
+
+	exec('cd '.$_SERVER['HOME'].';');
+
+	$backupDir = 'backup'; // Bitte per .htaccess schützen!
+	if (!file_exists($_SERVER['HOME'].'backup')) { exec('mkdir '.$backupDir); }
+
+	$configFile = './core/config/config.inc.php';
+
+	if (file_exists($configFile)) {
+
+	    include($configFile);
+
+	    $date = date('Ymd-His');
+
+	    $targetTar = $backupDir.'/'.$date.'_files.tar.gz';
+	    exec('/bin/pktar cfz '.$targetTar.' ./ --exclude="./backup" --exclude="./logs" --exclude="./usage" --exclude="./core/cache";');
+
+	    $targetSql = $backupDir.'/'.$date.'_files.sql';
+	    exec("mysqldump --host=$database_server --user=$database_user --password=$database_password --databases $dbase > {$targetSql}");
+
+		$_SESSION['update'] = 1;
+
+		echo '<h2>Backup erstellt</h2><p><a href="'.$_SERVER['PHP_SELF'].'">Update herunterladen und kopieren</a></p>';
+
+	} else {
+
+		echo '<p>MODX Config-Datei nicht gefunden! Pfad anpassen.</p>';
+
+	}
+
+} elseif ($_SESSION['update'] == 1) { // Update herunterladen und kopieren durchführen
+
+	exec('cd '.$_SERVER['HOME'].';');
+	exec('wget -O latest.zip http://modx.com/download/latest;');
+	exec('unzip latest.zip; rm latest.zip;');
+	//exec('cd modx-*; cp -r ./* ../; cd ..; rm -R modx-*;');
+	exec('chmod 777 ./core/config/config.inc.php');
+
+	$_SESSION['update'] = 2;
+
+	echo '<h2>Update heruntergeladen und kopiert.</h2><p>Nächste Schritte:</p><ol><li><a href="/setup" target="_blank">Update ausführen</a></li><li><a href="'.$_SERVER['PHP_SELF'].'">Update abschließen</a></li></ol>';
+
+} elseif ($_SESSION['update'] == 2) { // Update-Dateien säubern
+
+	exec('chmod 644 ./core/config/config.inc.php');
+	//exec('rm -R setup;');
+
+	echo '<h2>Update fertig!</h2><p><a href="/manager">zum Manager</a></p><p>Hinweise:</p><ul><li>.htaccess mit ht.access vergleichen, ggf. anpassen bzw. löschen</li></ul>';
+
+} else {
+
+	echo '<p>Fehler</p>';
+
+}
+?>
