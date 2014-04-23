@@ -39,22 +39,29 @@ if (!isset($_SESSION['update'])) { // Backup durchführen
 
 } elseif ($_SESSION['update'] == 1) { // Update herunterladen und kopieren durchführen
 
-	exec('cd '.$_SERVER['HOME'].';');
+	//exec('cd '.$_SERVER['HOME'].';');
 	exec('wget -O latest.zip http://modx.com/download/latest;');
 	exec('unzip latest.zip; rm latest.zip;');
-	//exec('cd modx-*; cp -r ./* ../; cd ..; rm -R modx-*;');
-	exec('chmod 777 ./core/config/config.inc.php');
+	//exec('cd '.$_SERVER['HOME'].'/modx-*;');
+	//exec('cd /modx-*;');
+	//exec('cp -r ./* ../;');
+	//exec('cd ../;');
+	//exec('rm -R modx-*;');
+	//exec('chmod 777 ./core/config/config.inc.php');
+
+	$ssh = 'cd '.$_SERVER['HOME'].'/modx-*; cp -r ./* ../; cd ../; rm -R modx-*; chmod 777 '.$_SERVER['HOME'].'/core/config/config.inc.php';
 
 	$_SESSION['update'] = 2;
 
-	echo '<h2>Update heruntergeladen und kopiert.</h2><p>Nächste Schritte:</p><ol><li><a href="/setup" target="_blank">Update ausführen</a></li><li><a href="'.$_SERVER['PHP_SELF'].'">Update abschließen</a></li></ol>';
+	echo '<h2>Update heruntergeladen.</h2><p>Nächste Schritte:</p><ol><li>Führen Sie diese Befehle per SSH aus:<br>'.$ssh.'</li><li><a href="/setup" target="_blank">Update ausführen</a></li><li><a href="'.$_SERVER['PHP_SELF'].'">Update abschließen</a></li></ol>';
 
 } elseif ($_SESSION['update'] == 2) { // Update-Dateien säubern
 
 	exec('chmod 644 ./core/config/config.inc.php');
 	//exec('rm -R setup;');
+	//exec('rm -R latest.zip;');
 
-	echo '<h2>Update fertig!</h2><p><a href="/manager">zum Manager</a></p><p>Hinweise:</p><ul><li>.htaccess mit ht.access vergleichen, ggf. anpassen bzw. löschen</li></ul>';
+	echo '<h2>Update fertig!</h2><p><a href="/manager">zum Manager</a></p><p>Hinweise:</p><ul><li>Setup Verzeichnis per SSH löschen: rm -R setup; rm -R latest.zip; chmod 644 core/config/config.inc.php;<li>.htaccess mit ht.access vergleichen, ggf. anpassen bzw. löschen</li></ul>';
 
 } else {
 
