@@ -10,6 +10,6 @@ Script zum Backup und anschließendem Update von MODX Revolution auf All-Inkl.co
 
 1. Datei im Hauptverzeichnis der MODX Revolution Installation ablegen
 2. Datei im Browser öffnen (Datei Endung .phpx um Shell Kommandos per PHP ausführen zu können)
-3. Anleitung im Browser folgen
+3. Anleitung im Browser folgen (Benötigt SSH Zugang)
 
 **Anmerkung**: Das Script befindet sich in einer frühen Phase, für Kritik bitte kurze Nachricht an mich. Danke!
