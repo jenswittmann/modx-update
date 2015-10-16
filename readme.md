@@ -1,5 +1,7 @@
 ##MODX Backup & Update Script
 
+**Hinweis:** Bitte nutzt [UpgradeMODX](https://github.com/BobRay/UpgradeMODX)!
+
 Script zum Backup und anschließendem Update von MODX Revolution auf All-Inkl.com Servern.
 
 * <http://www.jens-wittmann.de>
